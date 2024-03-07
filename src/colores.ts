@@ -3,7 +3,7 @@ export function hello(): string {
 }
 
 // fc memoize
-function memoize<T extends (...args: any[]) => any>(fn: T): T {
+export function memoize<T extends (...args: any[]) => any>(fn: T): T {
     const cache = new Map<string, ReturnType<T>>();
     return function(...args: Parameters<T>): ReturnType<T> {
         const key = JSON.stringify(args);
@@ -58,7 +58,7 @@ export function throttle(func: (combinar: string[]) => number, limit: number): (
 }
 
 //5:
-function debounce(func: (colores: string[]) => number, wait: number): (colores: string[]) => void {
+export function debounce(func: (colores: string[]) => number, wait: number): (colores: string[]) => void {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
     
     return function(combinar: string[]) {
