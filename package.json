@@ -8,10 +8,15 @@
     "@types/node": "^20.11.24",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.5"
   },
-
   "scripts": {
     "test": "jest"
-  }
+  },
+  "description": "uno banda \r El programa tomará nombres de colores\r como entrada y generará un número de dos dígitos.\r si imprimieran una\r banda marrón (valor 1) seguida de una banda verde (valor 5)\r  se traduciría en el número 15,",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [],
+  "author": ""
 }

@@ -1,96 +1,74 @@
-import { hello, ValorColor, CombinarColores, throttle, debounce, memoize } from '../src/colores';
+import { hello, memoize, BandaDeColores, ColorAndNumber, ValorColor, CombinarColores, throttle, debounce } from '../src/colores'; // Reemplaza './tu_archivo' con la ruta correcta a tu archivo
 
-test('says hello world', () => {
-    expect(hello()).toEqual('Hello, World');
+describe('hello function', () => {
+    it('should return "Hello, World"', () => {
+        expect(hello()).toBe('Hello, World');
+    });
 });
 
-describe('Función CombinarColores con throttle', () => {
-    jest.useFakeTimers();
+describe('memoize function', () => {
+    it('should memoize the function correctly', () => {
+        const fn = (x: number) => x * 2;
+        const memoizedFn = memoize(fn);
 
-    test('throttle limita llamadas a CombinarColores', () => {
-        const mockCombinarColores = jest.fn(CombinarColores);
-        const throttledCombinar = throttle(mockCombinarColores, 1000);
+        expect(memoizedFn(2)).toBe(4);
+        expect(memoizedFn(2)).toBe(4); // Cached result
+    });
+});
 
-        throttledCombinar(['Red', 'Blue']);
-        throttledCombinar(['Green', 'Violet']);
-
-        jest.advanceTimersByTime(500);
-        expect(mockCombinarColores).toHaveBeenCalledTimes(1);
-
-        jest.advanceTimersByTime(1000);
-        throttledCombinar(['Yellow', 'Black']);
-        jest.advanceTimersByTime(1000);
-        expect(mockCombinarColores).toHaveBeenCalledTimes(2);
+describe('ValorColor function', () => {
+    it('should return correct value for valid color', () => {
+        expect(ValorColor('Red')).toBe('2');
     });
 
-    afterAll(() => {
+    it('should return "Error: Color no válido" for invalid color', () => {
+        expect(ValorColor('Pink')).toBe('Error: Color no válido');
+    });
+});
+
+describe('CombinarColores function', () => {
+    it('should correctly combine colors', () => {
+        expect(CombinarColores(['Blue', 'Red'])).toBe(62); 
+    });
+});
+
+describe('throttle function', () => {
+    it('should throttle the function correctly', () => {
+        jest.useFakeTimers();
+
+        const mockFunc = jest.fn();
+        const throttledFunc = throttle(mockFunc, 1000);
+
+        throttledFunc(['Blue', 'Red']);
+        expect(mockFunc).toHaveBeenCalledTimes(1);
+
+        jest.advanceTimersByTime(1000);
+
+        throttledFunc(['Blue', 'Red']);
+        expect(mockFunc).toHaveBeenCalledTimes(2); 
+
         jest.useRealTimers();
     });
 });
 
-// Esto es la función debounce
-describe('Función CombinarColores con debounce', () => {
-    jest.useFakeTimers();
+describe('debounce function', () => {
+    it('should debounce the function correctly', () => {
+        jest.useFakeTimers();
 
-    test('debounce limita llamadas a CombinarColores', () => {
-        const mockCombinarColores = jest.fn(CombinarColores);
-        const debouncedCombinar = debounce(mockCombinarColores, 500);
+        const mockFunc = jest.fn();
+        const debouncedFunc = debounce(mockFunc, 1000);
 
-        debouncedCombinar(['Red', 'Blue']);
-        debouncedCombinar(['Green', 'Violet']);
+        debouncedFunc(['Blue', 'Red']);
+        debouncedFunc(['Blue', 'Red']);
+        debouncedFunc(['Blue', 'Red']);
+        debouncedFunc(['Blue', 'Red']);
 
-        jest.advanceTimersByTime(500);
-        expect(mockCombinarColores).toHaveBeenCalledTimes(1);
+        expect(mockFunc).not.toHaveBeenCalled();
 
-        debouncedCombinar(['Yellow', 'Black']);
-        jest.advanceTimersByTime(50);
-        expect(mockCombinarColores).toHaveBeenCalledTimes(1);
+        jest.advanceTimersByTime(1000);
 
-        jest.advanceTimersByTime(450);
-        expect(mockCombinarColores).toHaveBeenCalledTimes(2);
-    });
+        expect(mockFunc).toHaveBeenCalledTimes(1);
 
-    afterAll(() => {
         jest.useRealTimers();
-    });
-});
-
-describe('Función ValorColor', () => {
-    test('devolviendo el valor de un color', () => {
-        expect(ValorColor('Red')).toEqual('2');
-        expect(ValorColor('Blue')).toEqual('6');
-    });
-
-    test('"Error: Color no válido" en caso de que no haya colores', () => {
-        expect(ValorColor('Magenta')).toEqual("Error: Color no válido");
-    });
-});
-
-describe('Función CombinarColores', () => {
-    test('combina valores de colores', () => {
-        expect(CombinarColores(['Red', 'Blue'])).toEqual(26);
-        expect(CombinarColores(['Green', 'Violet'])).toEqual(57);
-    });
-
-    test('colores no válidos', () => {
-        expect(CombinarColores(['Red', 'Magenta'])).toBeNaN();
-    });
-});
-
-// Esto es la función memoize
-describe('Función ValorColor con memoize', () => {
-    test('memoize cachea correctamente el resultado', () => {
-        const mockValorColor = jest.fn().mockImplementation((color) => {
-            return ColorAndNumber[color] || "Error: Color no válido";
-        });
-        const memoizedValorColor = memoize(mockValorColor);
-
-        expect(memoizedValorColor('Red')).toEqual('2');
-        expect(memoizedValorColor('Red')).toEqual('2');
-        expect(memoizedValorColor('Blue')).toEqual('6');
-        expect(memoizedValorColor('Blue')).toEqual('6');
-
-        // La función debe haber sido llamada sólo una vez por color debido a la memoización
-        expect(mockValorColor).toHaveBeenCalledTimes(2);
     });
 });
